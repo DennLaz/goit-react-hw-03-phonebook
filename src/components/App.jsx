@@ -5,18 +5,31 @@ import Section from './Section';
 import ContactsForm from './ContactsForm';
 import ContactList from './ContactList';
 
-import styles from './app.module.css'
+import styles from './app.module.css';
 
 export class App extends Component {
   state = {
     contacts: [
-    {id: 'id-1', name: 'Rosie Simpson', number: '459-12-56'},
-    {id: 'id-2', name: 'Hermione Kline', number: '443-89-12'},
-    {id: 'id-3', name: 'Eden Clements', number: '645-17-79'},
-    {id: 'id-4', name: 'Annie Copeland', number: '227-91-26'},
+      { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
+      { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
+      { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
+      { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
     ],
     filter: '',
   };
+
+  componentDidMount() {
+    const newContacts = JSON.parse(localStorage.getItem('contacts'));
+    if (newContacts) {
+      this.setState({ contacts: newContacts });
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.contacts !== prevState) {
+      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+    }
+  }
 
   addContacts = ({ name, number }) => {
     const newContact = {
@@ -27,9 +40,9 @@ export class App extends Component {
     this.setState(prevState => {
       const findName = prevState.contacts.find(el => el.name === name);
       if (!findName) {
-        return {contacts:[...prevState.contacts, newContact ]}
+        return { contacts: [...prevState.contacts, newContact] };
       } else {
-        alert(`${newContact.name} is already in contacts`)
+        alert(`${newContact.name} is already in contacts`);
       }
     });
   };
@@ -73,11 +86,16 @@ export class App extends Component {
         </Section>
         <Section title="Contacts">
           <div className={styles.wrap}>
-             <label className={styles.label}>
-            Find contacts by name
-            <input className={styles.input} onChange={handleFilter} type="text" name="filter" />
-          </label>
-         </div>
+            <label className={styles.label}>
+              Find contacts by name
+              <input
+                className={styles.input}
+                onChange={handleFilter}
+                type="text"
+                name="filter"
+              />
+            </label>
+          </div>
           <ContactList contacts={contacts} removeContacts={removeContacts} />
         </Section>
       </div>
